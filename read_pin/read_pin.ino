@@ -8,20 +8,25 @@
 #define NAMBER_TABLE 3
 #define RX 10
 #define TX 11
+#define PSE 7
 
 void sendingScreen();
 void gameTact();
-int connectCheck(int pin, bool adc);
+int connectCheck(byte pin, bool adc);
 bool findTrueTable(byte seg, byte table);
 void comandEnd();
 void SendInt(String dev, int dat);
+void SendInt(String dev, int dat, bool bin);
+void NextionKarno(int count);
+void NextionButton();
 
 SoftwareSerial mySerial(RX,TX);
 
 byte karno_table[NAMBER_TABLE][4] = {{1,2,3,4}, {11,12,0,1}, {10,9,8,2}};
 int game_table[NAMBER_TABLE][COUNTER];
 int values[NAMBER_TABLE + 1] = {0,0,0,0};
-const char input[] = "123456"; 
+const byte input[NAMBER_TABLE] = {IN1, IN2, IN3};
+byte count_table = 0; 
 
 
 void setup(){
@@ -31,17 +36,27 @@ void setup(){
   pinMode(A1, INPUT);
   pinMode(A2, INPUT);
   pinMode(STEP, OUTPUT);
+  pinMode(PSE, OUTPUT);
   digitalWrite(STEP, LOW);
+  digitalWrite(PSE, LOW);
   Serial.begin(9600);
+  mySerial.begin(9600);
+  NextionKarno(count_table);
+  SendInt("Game.pn.val", values[NAMBER_TABLE + 1], false);
 }
 
 void loop(){
+  //delay(5000);
+  //gameTact();
   if (Serial.available()){
+    while (Serial.available()) Serial.read();
     gameTact();
   }
+  NextionButton();
+  
 }
 
-int connectCheck(int pin, bool adc){
+int connectCheck(byte pin, bool adc){
   if (adc){
     if (digitalRead(pin) && analogRead(A0) > 900)
       return 1;
@@ -57,22 +72,25 @@ int connectCheck(int pin, bool adc){
 void gameTact(){
   for(byte i = 0; i < COUNTER; i++){
     for(byte j = 0; j < NAMBER_TABLE; j++){
-      game_table[0][i] = connectCheck(input[j],0);
-      if (game_table[0][i] == findTrueTable(i,0))
-        ++values[i];
+      game_table[j][i] = connectCheck(input[j],0);
+      if (game_table[j][i] == findTrueTable(i,0))
+        ++values[j];
     }
     digitalWrite(STEP,HIGH);
     delay(50);
     digitalWrite(STEP,LOW);
   }
   for(int i = 0; i < NAMBER_TABLE; i++){
-    values[NAMBER_TABLE + 1] += values[i];
+    values[NAMBER_TABLE] += values[i];
     Serial.println("-----------------------------------------");
     for(int j = 0; j < COUNTER; j++){
       Serial.print(game_table[i][j]);
       Serial.print(" ");
     }
+    Serial.println(" ");
   }
+  Serial.println(values[NAMBER_TABLE + 1]);
+  SendInt("Game.pn.val", values[NAMBER_TABLE + 1], false);
   return;
 }
 bool findTrueTable(byte seg, byte table){
@@ -126,10 +144,33 @@ void comandEnd(){
     mySerial.write(0xff);
   return; 
 }
-void SendInt(String dev, int dat){
-   Serial.print(dev);
-   Serial.print("=");
-   Serial.print(dat);
+void SendInt(String dev, int dat, bool bin){
+   mySerial.print(dev);
+   mySerial.print("=");
+   if (bin)
+    mySerial.print(dat,BIN);
+   else
+    mySerial.print(dat);
    comandEnd();
    return;
+}
+void NextionKarno(byte count){
+  SendInt("Game.tb.val", count, false);
+  SendInt("Game.n0.val", karno_table[count][0], true);
+  SendInt("Game.n1.val", karno_table[count][1], true);
+  SendInt("Game.n2.val", karno_table[count][2], true);
+  SendInt("Game.n3.val", karno_table[count][3], true);
+  return;
+}
+void NextionButton(){
+  if(mySerial.available()){
+    byte a[5];
+    while (mySerial.available()) mySerial.readBytes(a,5);
+    if(count_table < NAMBER_TABLE-1)
+      count_table++;
+    else
+      count_table = 0;
+    NextionKarno(count_table);
+  }
+  return;
 }
