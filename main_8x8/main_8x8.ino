@@ -1,6 +1,6 @@
-#include<SoftwareSerial.h> // Версия 4 x 4
+#include<SoftwareSerial.h> // Версия 8 x 8
 
-#define IN1 2
+#define IN1 2 
 #define IN2 3
 #define IN3 4
 #define STEP 8
