@@ -1,33 +1,33 @@
-#include<SoftwareSerial.h> // Версия 8 x 8
+// Версия 8 x 8 //
 
-#define IN1 2 
+#include<SoftwareSerial.h> // 
+
+#define IN1 2         // Входы игры
 #define IN2 3
 #define IN3 4
-#define STEP 8
-#define COUNTER 16
-#define NAMBER_TABLE 3
-#define RX 10
-#define TX 11
-#define PSE 7
+#define STEP 8       // Пин - шаг счетчика
+#define COUNTER 64   // Размер таблици Карно
+#define NAMBER_TABLE 3 // Кол-во таблиц Карно
+#define RX 10  // Пин нового порта
+#define TX 11  // Пин нового порта
+#define PSE 7  // Сброс счетчика
+#define NUMBER_OF_VARIABLES 6// Количество перемнных
 
-void sendingScreen();
-void gameTact();
-int connectCheck(byte pin, bool adc);
-bool findTrueTable(byte seg, byte table);
-void comandEnd();
-void SendInt(String dev, int dat);
-void SendInt(String dev, int dat, bool bin);
-void NextionKarno(int count);
-void NextionButton();
+void gameTact();                                   // Игровой такт
+int connectCheck(byte pin, bool adc);              // Проверка подключения пина (С АЦП и без)
+bool findTrueTable(byte seg, byte table);          // Преобразование Карно в таблицу истинности
+void comandEnd();                                  // Конец строки команды для экрана
+void SendInt(String dev, int dat, bool bin);       // Отправка команд на экран
+void NextionKarno(byte count);                     // Отправка на экран таблицы Карно под номером count
+void NextionButton();                              // Обработка кнопки на экране
 
 SoftwareSerial mySerial(RX,TX);
 
-byte karno_table[NAMBER_TABLE][4] = {{0,0,0,0}, {11,12,0,1}, {10,9,8,2}};
+byte karno_table[NAMBER_TABLE][8] = {{0,0,0,0,0,0,0,0}, {255,112,200,100,126,34,34,34}, {200,199,180,234,255,250,255,255}};
 int game_table[NAMBER_TABLE][COUNTER];
 int values[NAMBER_TABLE + 1] = {0,0,0,0};
 const byte input[NAMBER_TABLE] = {IN1, IN2, IN3};
 byte count_table = 0; 
-
 
 void setup(){
   for (int i = 0; i < NAMBER_TABLE; i++)
@@ -52,7 +52,6 @@ void loop(){
      
   }
   NextionButton();
-  
 }
 
 int connectCheck(byte pin, bool adc){
@@ -76,14 +75,14 @@ void gameTact(){
         ++values[j];
     }
     digitalWrite(STEP,HIGH);
-    delay(50);
+    delay(20);
     digitalWrite(STEP,LOW);
   }
-  int summ = 0;
-  for(int i = 0; i < NAMBER_TABLE; i++){
+  byte summ = 0;
+  for(byte i = 0; i < NAMBER_TABLE; i++){
     summ += values[i];
     Serial.println("-----------------------------------------");
-    for(int j = 0; j < COUNTER; j++){
+    for(byte j = 0; j < COUNTER; j++){
       Serial.print(game_table[i][j]);
       Serial.print(" ");
     }
@@ -101,7 +100,7 @@ bool findTrueTable(byte seg, byte table){
   byte uneven = 0;
   byte line;
   byte column;
-  for(int i = 0; i < 4; i++){
+  for(int i = 0; i < NUMBER_OF_VARIABLES; i++){
     if (i % 2){
       uneven += bitRead(seg,i);
       uneven = uneven << 1;
@@ -126,6 +125,18 @@ bool findTrueTable(byte seg, byte table){
       case 0b00000010:
         line = 3;
         break;
+      case 0b00000110:
+        line = 4;
+        break;
+      case 0b00000111:
+        line = 5;
+        break;
+      case 0b00000101:
+        line = 6;
+        break;
+      case 0b00000100:
+        line = 7;
+        break;
     }
     switch(uneven){
       case 0b00000000:
@@ -140,9 +151,20 @@ bool findTrueTable(byte seg, byte table){
       case 0b00000010:
         column = 3;
         break;
+      case 0b00000110:
+        column = 4;
+        break;
+      case 0b00000111:
+        column = 5;
+        break;
+      case 0b00000101:
+        column = 6;
+        break;
+      case 0b00000100:
+        column = 7;
+        break;
     }
     return bitRead(karno_table[table][line], column);
-  
 }
 void comandEnd(){ 
   for(int k = 0; k < 3; k++)
