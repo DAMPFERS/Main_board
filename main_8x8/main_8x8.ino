@@ -42,14 +42,13 @@ void setup(){
   Serial.begin(9600);
   mySerial.begin(9600);
   NextionKarno(count_table);
-  SendInt("Game.pn.val", values[NAMBER_TABLE + 1], false);
+  SendInt("Game.pn.val", 0, false);
 }
 
 void loop(){
   if (Serial.available()){
     while (Serial.available()) Serial.read();
     gameTact();
-     
   }
   NextionButton();
 }
@@ -113,54 +112,54 @@ bool findTrueTable(byte seg, byte table){
     even = even >> 1;
     uneven = uneven >> 1;
     switch(even){
-      case 0b00000000:
+      case 0b0:
         line = 0;
         break;
-      case 0b00000001:
+      case 0b1:
         line = 1;
         break;
-      case 0b00000011:
+      case 0b11:
         line = 2;
         break;
-      case 0b00000010:
+      case 0b10:
         line = 3;
         break;
-      case 0b00000110:
+      case 0b110:
         line = 4;
         break;
-      case 0b00000111:
+      case 0b111:
         line = 5;
         break;
-      case 0b00000101:
+      case 0b101:
         line = 6;
         break;
-      case 0b00000100:
+      case 0b100:
         line = 7;
         break;
     }
     switch(uneven){
-      case 0b00000000:
+      case 0b0:
         column = 0;
         break;
-      case 0b00000001:
+      case 0b1:
         column = 1;
         break;
-      case 0b00000011:
+      case 0b11:
         column = 2;
         break;
-      case 0b00000010:
+      case 0b10:
         column = 3;
         break;
-      case 0b00000110:
+      case 0b110:
         column = 4;
         break;
-      case 0b00000111:
+      case 0b111:
         column = 5;
         break;
-      case 0b00000101:
+      case 0b101:
         column = 6;
         break;
-      case 0b00000100:
+      case 0b100:
         column = 7;
         break;
     }
