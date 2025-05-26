@@ -1,0 +1,3 @@
+cd C:\PROGRAMS\Microcontrollers\stm32\dfu-util_0.10_x86_64
+.\dfu-util.exe -l
+.\dfu-util.exe -a 0 -s 0x08000000:leave -D "C:\PROGRAMS\Main_board\Control_table_stm32_RVV\.pio\build\blackpill_f411ce\firmware.bin"

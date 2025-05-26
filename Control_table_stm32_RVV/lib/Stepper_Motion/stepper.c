@@ -9,16 +9,6 @@ static char queueTail = 0;
 
 
 void Stepper_Init(void){
-    // for(char i = 0; i < MAX_QUEUE_SIZE; i++){
-    //     motion_queue[i].x = 0;
-    //     motion_queue[i].y = 0;
-    //     motion_queue[i].x = 0;
-    //     motion_queue[i].x = 0;
-    //     motion_queue[i].command[0] = '0';
-    //     motion_queue[i].command[1] = '-';
-    //     motion_queue[i].command[2] = 'o';
-    //     motion_queue[i].command[3] = '\0';
-    // }
         
     // Инициализация драйверов шаговых двигателей, таймеров и прерываний
     

@@ -28,8 +28,13 @@
 #define ENDSTOP_Z_PIN        GPIO_PIN_11
 #define ENDSTOP_Z_PORT       GPIOC
 
+#define FEEDER_PWM_PIN        GPIO_PIN_5
+#define FEEDER_PWM_PORT       GPIOA
+#define FEEDER_DIR_PIN        GPIO_PIN_6
+#define FEEDER_DIR_PORT       GPIOA
+
 
 // UART
-#define UART_BAUDRATE       115200
-#define UART_BUFFER_SIZE    32
-#define GCODE_QUEUE_SIZE    16
+#define UART_BAUDRATE           115200
+#define RX_BUFFER_SIZE          256
+#define GCODE_QUEUE_SIZE        16

@@ -1,8 +1,4 @@
-#include "stm32f4xx_hal.h"
 #include "main.h"
-#include "uart_handler.h"
-
-
 
 
 // Обработчик прерывания DMA (для передачи)
@@ -13,6 +9,35 @@ void DMA2_Stream7_IRQHandler(void) {
         // Здесь можно добавить обработку завершения передачи
     }
 }
+
+// Обработчик прерывания DMA (для приема)
+void DMA2_Stream2_IRQHandler(void) {
+    if (DMA2->LISR & DMA_LISR_TCIF2) {
+        DMA2->LIFCR = DMA_LIFCR_CTCIF2; // Сбрасываем флаг прерывания
+        // Здесь можно добавить обработку полученных данных
+        a++;
+        // USART1_SendData(tx_buffer, sizeof(tx_buffer) - 1);
+
+        // Очищаем ошибки USART
+        volatile uint32_t sr = USART1->SR;
+        volatile uint32_t dr = USART1->DR;
+        (void)sr; (void)dr;
+
+
+        // Вычисляем количество принятых данных
+        uint16_t received_bytes = RX_BUFFER_SIZE - DMA2_Stream2->NDTR;
+
+        if (received_bytes > 0) {
+            USART1_SendData(tx_buffer, sizeof(tx_buffer) - 1);
+        }
+
+        // DMA2_Stream2->NDTR = RX_BUFFER_SIZE;
+        // DMA2_Stream2->CR |= DMA_SxCR_EN;
+    }
+}
+
+
+
 
 void USART1_IRQHandler(void) {
     if (USART1->SR & USART_SR_IDLE) {
