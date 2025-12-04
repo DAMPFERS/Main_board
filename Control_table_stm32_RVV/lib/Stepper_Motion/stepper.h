@@ -2,6 +2,7 @@
 #define STEPPER_H
 
 #include "gcode_parser.h"
+#include "main.h"
 
 // Инициализация шаговых двигателей и таймеров
 void Stepper_Init(void);

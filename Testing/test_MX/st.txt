@@ -1,0 +1,1 @@
+arm-none-eabi-objcopy -O ihex test_MX.elf test.hex

@@ -3,7 +3,9 @@
 
 
 volatile uint8_t rx_buffer[RX_BUFFER_SIZE];
-volatile uint8_t tx_buffer[] = "HULLO\r\n";
+volatile uint8_t tx_buffer[TX_BUFFER_SIZE];
+
+volatile uint16_t dma_head = 0; // Текущая позиция DMA
 
 
 

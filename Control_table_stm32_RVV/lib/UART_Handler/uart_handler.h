@@ -10,7 +10,8 @@
 #include "stm32f4xx_it.h"
 
 extern volatile uint8_t rx_buffer[RX_BUFFER_SIZE];
-extern volatile uint8_t tx_buffer[8];
+extern volatile uint8_t tx_buffer[TX_BUFFER_SIZE];
+extern volatile uint16_t dma_head;                             // Текущая позиция DMA
 
 // Инициализация USART1 с DMA
 void USART1_Init(void);

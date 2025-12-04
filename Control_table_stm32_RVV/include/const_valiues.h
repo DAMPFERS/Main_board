@@ -37,4 +37,5 @@
 // UART
 #define UART_BAUDRATE           115200
 #define RX_BUFFER_SIZE          256
+#define TX_BUFFER_SIZE          16
 #define GCODE_QUEUE_SIZE        16
